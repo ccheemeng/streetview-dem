@@ -20,7 +20,7 @@ Reproduced from [Conda's user guide](https://conda.io/projects/conda/en/latest/u
     ```shell
     conda env list
     ```
-    You can also use ```conda info --envs```
+    You can also use ```conda info --envs```.
 
 ## Running
 

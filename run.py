@@ -45,7 +45,7 @@ if __name__ == "__main__":
                         help="Latitude and Longitude of the second bounding rectangle point",
                         dest="p2")
     parser.add_argument("-r", "--resolution",
-                        default=50, type=float, required=False,
+                        default=50.0, type=float, required=False,
                         help="Maximum distance between sample points",
                         dest="resolution")
     parser.add_argument("-t", "--target-crs",
@@ -53,7 +53,7 @@ if __name__ == "__main__":
                         help="EPSG code of the target CRS",
                         dest="target_crs")
     parser.add_argument("-o", "--output",
-                        default="./output.xyz", type=str, required=False,
+                        default="./output.csv", type=str, required=False,
                         help="Output filepath",
                         dest="filepath")
     args = parser.parse_args()

@@ -1,4 +1,4 @@
-from aiohttp import ClientSession
+from aiohttp import ClientSession, ClientTimeout
 import argparse
 import asyncio
 
@@ -30,7 +30,7 @@ def main(p1, p2, resolution, target_crs, filepath):
 async def get_panos(p1, p2, resolution):
     sample = geo.Sample(p1, p2, resolution)
     radius = sample.search_radius()
-    async with ClientSession() as session:
+    async with ClientSession(timeout=ClientTimeout(total=None), raise_for_status=True) as session:
         tasks = []
         for lat, lon in sample.generate_latlon_samples():
             tasks.append(streetview.StreetViewAPI.find_pano_full(session, lat, lon, radius))

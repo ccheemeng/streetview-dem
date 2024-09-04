@@ -15,7 +15,7 @@ def main(p1, p2, resolution, target_crs, filepath):
     xyz_4326s = []
     ids = set()
     for pano in panos:
-        if pano is not None and pano.id not in ids:
+        if pano and pano.elevation and pano.depth and pano.id not in ids:
             ids.add(pano.id)
             xyz_4326s.append((pano.lon, pano.lat, pano.elevation - pano.depth.data[-1][0]))
     

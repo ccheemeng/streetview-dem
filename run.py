@@ -6,35 +6,41 @@ import geo
 import streetview
 
 import csv
+from pathlib import Path
 
 def main(p1, p2, resolution, target_crs, filepath):
     p1 = tuple(p1)
     p2 = tuple(p2)
-    
-    panos = asyncio.run(get_panos(p1, p2, resolution))
-    xyz_4326s = []
-    ids = set()
-    for pano in panos:
-        if pano and pano.elevation and pano.depth and pano.id not in ids:
-            ids.add(pano.id)
-            xyz_4326s.append((pano.lon, pano.lat, pano.elevation - pano.depth.data[-1][0]))
-    
-    transformer = geo.Transform(4326, target_crs)
-    xyz_target = list(map(lambda xyz: transformer.transform3d(xyz), xyz_4326s))
-    
+    Path(filepath).parent.mkdir(parents=True, exist_ok=True)
     with open(filepath, 'w', newline='') as csvfile:
         csv_writer = csv.writer(csvfile)
-        csv_writer.writerow(['x', 'y', 'z'])
-        csv_writer.writerows(xyz_target)
+        csv_writer.writerow(['x', 'y', 'z'])    
+    panos = asyncio.run(write_panos(p1, p2, resolution, target_crs, filepath))
 
-async def get_panos(p1, p2, resolution):
+async def write_panos(p1, p2, resolution, target_crs, filepath):
     sample = geo.Sample(p1, p2, resolution)
     radius = sample.search_radius()
     async with ClientSession(timeout=ClientTimeout(total=None), raise_for_status=True) as session:
         tasks = []
+        ids = set()
         for lat, lon in sample.generate_latlon_samples():
-            tasks.append(streetview.StreetViewAPI.find_pano_full(session, lat, lon, radius))
-        return await asyncio.gather(*tasks)
+            tasks.append(write_pano_xyz(ids, await streetview.StreetViewAPI.find_pano_full(session, lat, lon, radius), target_crs, filepath))
+        await asyncio.gather(*tasks)
+    
+async def write_pano_xyz(ids, pano, target_crs, filepath):
+    if pano and pano.elevation and pano.depth and pano.id not in ids:
+        ids.add(pano.id)
+        xyz_4326 = (pano.lon, pano.lat, pano.elevation - pano.depth.data[-1][0])
+        transformer = geo.Transform(4326, target_crs)
+        xyz_target = transformer.transform3d(xyz_4326)
+        print(xyz_target)
+        loop = asyncio.get_running_loop()
+        await loop.run_in_executor(None, writerow, xyz_target, filepath)
+
+def writerow(row, filepath):
+    with open(filepath, 'a+', newline='') as csvfile:
+        csv_writer = csv.writer(csvfile)
+        csv_writer.writerow(row)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

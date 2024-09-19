@@ -30,7 +30,7 @@ Sample run:
 ```shell
 python run.py 1.2843199044475546 103.77660798583958 1.3019238320101958 103.756764131736 -r 200 -t 3414 -o ./output/wcp.xyz
 ```
-The above command will query the bounding rectangle defined by (1.2843199044475546, 103.77660798583958) and (1.3019238320101958, 103.756764131736) at a sample resolution of 200m. The output will be stored in ```./output/wcp.xyz``` in EPSG:3414 format.
+The above command will query the bounding rectangle defined by (1.2843199044475546, 103.77660798583958) and (1.3019238320101958, 103.756764131736) at a sample resolution of 200m. The output will be stored in [```./output/wcp.xyz```](output/wcp.xyz) in EPSG:3414 format.
 
 ## <a name="arguments"></a>Arguments
 

@@ -1,0 +1,3 @@
+# allow output files in output directory
+!*.csv
+!*.xyz

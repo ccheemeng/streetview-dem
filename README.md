@@ -1,4 +1,4 @@
-# streetview-dem
+# Street View DEMs
 
 Generate digital elevation maps (DEM) from Google Street View API queries.
 
